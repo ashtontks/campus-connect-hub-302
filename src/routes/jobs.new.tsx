@@ -129,6 +129,10 @@ function NewJob() {
               </div>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="hours">Working hours</Label>
+              <Input id="hours" value={form.working_hours} onChange={(e) => setForm({ ...form, working_hours: e.target.value })} placeholder="e.g. Sat–Sun 9am–3pm, ~12 hrs/week" />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="desc">Description</Label>
               <Textarea id="desc" required rows={8} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Describe responsibilities, schedule, required experience..." />
             </div>
