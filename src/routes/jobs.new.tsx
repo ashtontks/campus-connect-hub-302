@@ -30,6 +30,7 @@ const schema = z.object({
   location: z.string().trim().min(1).max(120),
   is_remote: z.boolean(),
   hourly_pay: z.number().min(0).max(10000).nullable(),
+  working_hours: z.string().trim().max(120).optional().or(z.literal("")),
 });
 
 function NewJob() {
