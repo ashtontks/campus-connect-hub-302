@@ -72,7 +72,12 @@ function NewJob() {
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from("jobs")
-      .insert({ ...parsed.data, employer_id: userData.user!.id })
+      .insert({
+        ...parsed.data,
+        working_hours: parsed.data.working_hours || null,
+        employer_id: userData.user!.id,
+        status: "active",
+      })
       .select("id")
       .single();
     setSubmitting(false);
