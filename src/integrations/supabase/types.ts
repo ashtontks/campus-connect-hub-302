@@ -22,6 +22,7 @@ export type Database = {
           id: string
           job_id: string
           note: string
+          status: string
           student_id: string
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           id?: string
           job_id: string
           note: string
+          status?: string
           student_id: string
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           id?: string
           job_id?: string
           note?: string
+          status?: string
           student_id?: string
         }
         Relationships: [
@@ -63,7 +66,9 @@ export type Database = {
           id: string
           is_remote: boolean
           location: string
+          status: string
           title: string
+          working_hours: string | null
         }
         Insert: {
           category: string
@@ -75,7 +80,9 @@ export type Database = {
           id?: string
           is_remote?: boolean
           location: string
+          status?: string
           title: string
+          working_hours?: string | null
         }
         Update: {
           category?: string
@@ -87,7 +94,9 @@ export type Database = {
           id?: string
           is_remote?: boolean
           location?: string
+          status?: string
           title?: string
+          working_hours?: string | null
         }
         Relationships: []
       }
