@@ -30,6 +30,7 @@ const schema = z.object({
   location: z.string().trim().min(1).max(120),
   is_remote: z.boolean(),
   hourly_pay: z.number().min(0).max(10000).nullable(),
+  working_hours: z.string().trim().max(120).optional().or(z.literal("")),
 });
 
 function NewJob() {
@@ -44,6 +45,7 @@ function NewJob() {
     location: "",
     is_remote: false,
     hourly_pay: "",
+    working_hours: "",
   });
 
   if (loading) return <div className="container mx-auto p-10">Loading…</div>;
@@ -70,7 +72,12 @@ function NewJob() {
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from("jobs")
-      .insert({ ...parsed.data, employer_id: userData.user!.id })
+      .insert({
+        ...parsed.data,
+        working_hours: parsed.data.working_hours || null,
+        employer_id: userData.user!.id,
+        status: "active",
+      })
       .select("id")
       .single();
     setSubmitting(false);
@@ -120,6 +127,10 @@ function NewJob() {
                 <Label htmlFor="rem" className="cursor-pointer">Remote-friendly</Label>
                 <Switch id="rem" checked={form.is_remote} onCheckedChange={(v) => setForm({ ...form, is_remote: v })} />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hours">Working hours</Label>
+              <Input id="hours" value={form.working_hours} onChange={(e) => setForm({ ...form, working_hours: e.target.value })} placeholder="e.g. Sat–Sun 9am–3pm, ~12 hrs/week" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="desc">Description</Label>
