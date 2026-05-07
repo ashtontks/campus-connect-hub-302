@@ -44,17 +44,27 @@ function Dashboard() {
         .order("created_at", { ascending: false });
 
       const ids = (jobsData ?? []).map((j) => j.id);
-      const { data: apps } = ids.length
+      const { data: appsRaw } = ids.length
         ? await supabase
             .from("applications")
-            .select("id, job_id, note, contact_email, contact_phone, created_at, student:profiles!applications_student_id_fkey(full_name)")
+            .select("id, job_id, student_id, note, contact_email, contact_phone, created_at")
             .in("job_id", ids)
         : { data: [] as any[] };
 
-      // join in memory
+      const studentIds = Array.from(new Set((appsRaw ?? []).map((a: any) => a.student_id)));
+      const { data: profs } = studentIds.length
+        ? await supabase.from("profiles").select("id, full_name").in("id", studentIds)
+        : { data: [] as any[] };
+      const profMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
+
+      const apps = (appsRaw ?? []).map((a: any) => ({
+        ...a,
+        student: profMap.get(a.student_id) ?? null,
+      }));
+
       const merged = (jobsData ?? []).map((j: any) => ({
         ...j,
-        applications: (apps ?? []).filter((a: any) => a.job_id === j.id),
+        applications: apps.filter((a: any) => a.job_id === j.id),
       })) as JobWithApps[];
       setJobs(merged);
     })();
