@@ -43,8 +43,12 @@ function JobsList() {
 
   useEffect(() => {
     let active = true;
-    (async () => {
-      let query = supabase.from("jobs").select("*").order("created_at", { ascending: false });
+    const fetchJobs = async () => {
+      let query = supabase
+        .from("jobs")
+        .select("*")
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
       if (category !== "all") query = query.eq("category", category);
       if (remoteOnly) query = query.eq("is_remote", true);
       const min = parseFloat(minPay);
@@ -62,8 +66,23 @@ function JobsList() {
         );
       }
       setJobs(result);
-    })();
-    return () => { active = false; };
+    };
+
+    fetchJobs();
+
+    const channel = supabase
+      .channel("jobs-listings")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "jobs" },
+        () => fetchJobs()
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [q, category, remoteOnly, minPay]);
 
   return (
