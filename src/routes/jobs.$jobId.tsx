@@ -96,7 +96,13 @@ function JobDetail() {
       contact_phone: parsed.data.contact_phone || null,
     });
     setSubmitting(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      if (error.code === "23505") {
+        setApplied(true);
+        return toast.error("You've already applied to this job.");
+      }
+      return toast.error(error.message);
+    }
     setApplied(true);
     toast.success("Application sent!");
   };
