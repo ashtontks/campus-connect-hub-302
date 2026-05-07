@@ -45,6 +45,7 @@ function NewJob() {
     location: "",
     is_remote: false,
     hourly_pay: "",
+    working_hours: "",
   });
 
   if (loading) return <div className="container mx-auto p-10">Loading…</div>;
