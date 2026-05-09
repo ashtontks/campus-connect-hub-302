@@ -44,9 +44,13 @@ function Dashboard() {
 
   useEffect(() => {
     (async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user.id;
+      if (!userId) return;
       const { data: jobsData } = await supabase
         .from("jobs")
         .select("*")
+        .eq("employer_id", userId)
         .order("created_at", { ascending: false });
 
       const ids = (jobsData ?? []).map((j) => j.id);
