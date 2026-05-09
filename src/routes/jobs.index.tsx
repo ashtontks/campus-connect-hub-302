@@ -225,8 +225,22 @@ function JobsList() {
       ) : jobs.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed py-16 text-center">
           <Briefcase className="mx-auto h-10 w-10 text-muted-foreground" />
-          <p className="mt-3 font-medium">No jobs match your filters</p>
-          <p className="text-sm text-muted-foreground">Try clearing some filters.</p>
+          <p className="mt-3 font-medium">No jobs found matching your filters.</p>
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+            Try adjusting your search or check back soon — new jobs are added daily.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-5"
+            onClick={() => {
+              setQ("");
+              setCategory("all");
+              setRemoteOnly(false);
+              setMinPay("");
+            }}
+          >
+            Clear all filters
+          </Button>
         </div>
       ) : (
         <div className="grid gap-4">
