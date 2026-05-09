@@ -48,6 +48,21 @@ function Home() {
                 </Link>
               </Button>
             </div>
+
+            {/* Stats bar */}
+            <dl className="mt-12 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { value: "500+", label: "Job listings" },
+                { value: "Free", label: "To apply" },
+                { value: "200+", label: "Employers" },
+                { value: "48h", label: "Avg response" },
+              ].map((s) => (
+                <div key={s.label} className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+                  <dt className="font-display text-2xl font-bold text-white">{s.value}</dt>
+                  <dd className="text-xs uppercase tracking-wide text-white/70">{s.label}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
