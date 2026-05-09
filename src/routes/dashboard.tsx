@@ -10,6 +10,12 @@ export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
     if (!data.session) throw redirect({ to: "/auth" });
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.session.user.id)
+      .maybeSingle();
+    if (profile?.role !== "employer") throw redirect({ to: "/jobs" });
   },
   head: () => ({ meta: [{ title: "Employer dashboard — ShiftIn" }] }),
   component: Dashboard,
@@ -38,9 +44,13 @@ function Dashboard() {
 
   useEffect(() => {
     (async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user.id;
+      if (!userId) return;
       const { data: jobsData } = await supabase
         .from("jobs")
         .select("*")
+        .eq("employer_id", userId)
         .order("created_at", { ascending: false });
 
       const ids = (jobsData ?? []).map((j) => j.id);
