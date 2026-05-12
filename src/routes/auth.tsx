@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { lovable } from "@/integrations/lovable";
@@ -36,7 +36,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   // signup
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<"student" | "employer">("student");
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,15 +63,15 @@ function AuthPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/jobs`,
-        data: { full_name: fullName, role },
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+        data: { full_name: fullName },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     await refreshProfile();
     toast.success("Account created!");
-    navigate({ to: "/jobs" });
+    navigate({ to: "/onboarding" });
   };
 
   return (
@@ -91,13 +90,13 @@ function AuthPage() {
             onClick={async () => {
               setLoading(true);
               const result = await lovable.auth.signInWithOAuth("google", {
-                redirect_uri: `${window.location.origin}/dashboard`,
+                redirect_uri: `${window.location.origin}/onboarding`,
               });
               if (result.redirected) return;
               setLoading(false);
               if (result.error) return toast.error(result.error.message);
               await refreshProfile();
-              navigate({ to: "/dashboard" });
+              navigate({ to: "/onboarding" });
             }}
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
@@ -153,17 +152,6 @@ function AuthPage() {
                 <div className="space-y-2">
                   <Label htmlFor="su-pw">Password</Label>
                   <Input id="su-pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>I am a...</Label>
-                  <RadioGroup value={role} onValueChange={(v) => setRole(v as "student" | "employer")} className="grid grid-cols-2 gap-2">
-                    <Label className="flex cursor-pointer items-center gap-2 rounded-lg border bg-card p-3 hover:bg-muted has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-                      <RadioGroupItem value="student" /> Student
-                    </Label>
-                    <Label className="flex cursor-pointer items-center gap-2 rounded-lg border bg-card p-3 hover:bg-muted has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-                      <RadioGroupItem value="employer" /> Employer
-                    </Label>
-                  </RadioGroup>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Creating account..." : "Create account"}
