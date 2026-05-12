@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Search, MapPin, Briefcase, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -254,6 +255,24 @@ function JobsList() {
 }
 
 function JobCard({ job }: { job: Job }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleApply = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (job.isSample) {
+      toast.info("This is a sample listing for preview only.");
+      return;
+    }
+    if (!user) {
+      toast.info("Sign in to apply for this job.");
+      navigate({ to: "/auth", search: { mode: "signin" } });
+      return;
+    }
+    navigate({ to: "/jobs/$jobId", params: { jobId: job.id } });
+  };
+
   const cardInner = (
     <Card className="group p-6 transition-all hover:shadow-[var(--shadow-elegant)] hover:-translate-y-0.5">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -282,22 +301,7 @@ function JobCard({ job }: { job: Job }) {
           <div className="flex items-center gap-1 text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />{job.location}
           </div>
-          {job.isSample ? (
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toast.info("This is a sample listing for preview only.");
-              }}
-            >
-              Apply
-            </Button>
-          ) : (
-            <Button size="sm" asChild>
-              <span>Apply</span>
-            </Button>
-          )}
+          <Button size="sm" onClick={handleApply}>Apply</Button>
         </div>
       </div>
     </Card>
