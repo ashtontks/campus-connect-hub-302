@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { lovable } from "@/integrations/lovable";
 
 const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
 
