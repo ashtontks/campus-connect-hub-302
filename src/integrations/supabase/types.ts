@@ -105,18 +105,21 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          onboarded: boolean
           role: Database["public"]["Enums"]["user_role"]
         }
         Insert: {
           created_at?: string
           full_name?: string | null
           id: string
+          onboarded?: boolean
           role?: Database["public"]["Enums"]["user_role"]
         }
         Update: {
           created_at?: string
           full_name?: string | null
           id?: string
+          onboarded?: boolean
           role?: Database["public"]["Enums"]["user_role"]
         }
         Relationships: []
